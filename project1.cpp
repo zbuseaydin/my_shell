@@ -2,6 +2,10 @@
 #include <unistd.h>
 #include <bits/stdc++.h>
 #include <list>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <stdio.h>
+
 using namespace std;
 
 int main(int argc, char *argv[]){
@@ -9,32 +13,69 @@ int main(int argc, char *argv[]){
 	string arg;
 	list <string> history;
 	list <string> :: iterator it;
-//	
+	char* username = getenv("USERNAME");
+	char cool[] = " >>> ";
+	strcat(username, cool);
 	
 	while (command != "exit"){
-		cout << "username >>> ";
+		cout << username;
 		cin >> command;
 
 		if(history.size()>=15){
 			it = history.begin();
 			history.erase(it);
 		}
+
 		if(command == "listdir"){
-			system("ls");
+			pid_t pid = fork();
+			if(pid < 0){
+				cerr << "Error while forking!";
+			}else if(pid == 0){
+				execl("/bin/ls", "ls", NULL);
+				exit(0);
+			}else{
+				wait(NULL);
+			}
+//			system("ls");
 
 		}else if(command == "mycomputername"){
-			system("whoami");
+			pid_t pid = fork();
+			if(pid < 0){
+				cerr << "Error while forking!";
+			}else if(pid == 0){
+				execl("/bin/whoami", "whoami", NULL);
+				exit(0);
+			}else{
+				wait(NULL);
+			}
+	//		system("whoami");
 
 		}else if(command == "whatsmyip"){
-			system("hostname -i");
+			pid_t pid = fork();
+			if(pid < 0){
+				cerr << "Error while forking!";
+			}else if(pid == 0){
+				execl("/bin/hostname", "hostname", "-i", NULL);
+				exit(0);
+			}else{
+				wait(NULL);
+			}
 
 		}else if(command == "hellotext"){  ////// must do something else
-			system("nano");
+			char* defaultEditor = getenv("EDITOR");
+			if(defaultEditor == NULL)
+				system("nano");
+			else
+				system(defaultEditor);
 
 		}else if(command == "dididothat"){
-			cin >> arg;
+//			for(it = history.begin(); it != history.end(); it++)
+//				cout << *it;
+
+			getline(cin, arg);
+			command += arg;
 			int last = arg.find_last_of("\"");
-			string checkCommand = arg.substr(1, last-1);
+			string checkCommand = arg.substr(2, last-2);
 			bool found = false;
 			for(it = history.begin(); it != history.end(); it++){
 				if(*it == checkCommand){
@@ -47,13 +88,21 @@ int main(int argc, char *argv[]){
 				cout << "No\n";
 		}else if(command == "printfile"){
 			getline(cin, arg);
+			command += arg; 
 			if(arg.find(">") < arg.length()){
 				string commandStr = "cat " + arg;
 				system(commandStr.c_str());
+			}else{
+				string line;
+				ifstream readFile(arg.substr(1, arg.length()).c_str());
+				do{
+					getline(readFile, line);
+					cout << line;
+					getline(cin, arg);
+				}
+				while(arg.length()==0 && readFile.peek()!=EOF);
 			}
-//			cout << arg;
 		}else{
-			getline(cin, arg);
 			continue;
 		}
 		history.push_back(command);
