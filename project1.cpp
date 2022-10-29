@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
 	strcat(user, cool);
 	
 	while (command != "exit"){
-		cout << username;
+		cout << user;
 		cin >> command;
 
 		// must store the last executed 15 commands
@@ -43,6 +43,7 @@ int main(int argc, char *argv[]){
 		// execute "whoami" for "mycomputername" command
 		}else if(command == "mycomputername"){
 			cout << username;
+			cout << "\n";
 
 		// execute "hostname -i" for "whatsmyip" command
 		}else if(command == "whatsmyip"){
