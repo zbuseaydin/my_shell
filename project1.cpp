@@ -14,7 +14,9 @@ int main(int argc, char *argv[]){
 	list <string> :: iterator it;
 	char* username = getenv("USERNAME");
 	char cool[] = " >>> ";
-	strcat(username, cool);
+	char* user;
+	strcat(user, username);
+	strcat(user, cool);
 	
 	while (command != "exit"){
 		cout << username;
@@ -40,15 +42,7 @@ int main(int argc, char *argv[]){
 
 		// execute "whoami" for "mycomputername" command
 		}else if(command == "mycomputername"){
-			pid_t pid = fork();
-			if(pid < 0){
-				cerr << "Error while forking!";
-			}else if(pid == 0){
-				execl("/bin/whoami", "whoami", NULL);
-				exit(0);
-			}else{
-				wait(NULL);
-			}
+			cout << username;
 
 		// execute "hostname -i" for "whatsmyip" command
 		}else if(command == "whatsmyip"){
